@@ -10,12 +10,8 @@ export const createEventSchema = z.object({
   ubicacion: z.string({
     required_error: "Ubicación es requerida",
   }),
-  hora: z.coerce.date({
-    required_error: "Hora es requerida",
-    invalid_type_error: "Hora debe ser una fecha valida",
-  }),
-  fecha: z.coerce.date({
-    required_error: "Fecha es requerida",
-    invalid_type_error: "Fecha debe ser una fecha valida",
+  fechaHora: z.coerce.date({
+    required_error: "La fecha y hora es requerida",
+    invalid_type_error: "Fecha y hora debe ser una fecha valida",
   }),
 });

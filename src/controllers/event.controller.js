@@ -13,15 +13,14 @@ export const getEvents = async (req, res) => {
 
 export const createEvent = async (req, res) => {
   try {
-    const { nombreEvento, tipoEvento, ubicacion, hora, fecha } = req.body;
+    const { nombreEvento, tipoEvento, ubicacion, fechaHora } = req.body;
 
     const newEvent = new Event({
       nombreEvento,
       tipoEvento,
       ubicacion,
-      hora,
-      fecha,
-      user: req.user.id, 
+      fechaHora,
+      user: req.user.id,
     });
 
     const savedEvent = await newEvent.save();
@@ -37,8 +36,7 @@ export const getEvent = async (req, res) => {
     if (!event)
       return res.status(404).json({ message: "Evento no encontrado" });
 
-    // Validación para asegurar que el evento pertenece al usuario
-    if (event.user.toString() !== req.user.id) {
+    if (event.user._id.toString() !== req.user.id) {
       return res
         .status(403)
         .json({ message: "No tienes permiso para ver este evento" });
@@ -53,19 +51,20 @@ export const getEvent = async (req, res) => {
 export const deleteEvent = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
-    if (!event)
+    if (!event) {
       return res.status(404).json({ message: "Evento no encontrado" });
-
-    // Validación para asegurar que el evento pertenece al usuario
-    if (event.user.toString() !== req.user.id) {
-      return res
-        .status(403)
-        .json({ message: "No tienes permiso para eliminar este evento" });
     }
 
-    await event.remove();
+    // Validar que el usuario sea el dueño del evento (si aplicas seguridad)
+    if (event.user.toString() !== req.user.id) {
+      return res.status(403).json({ message: "No autorizado" });
+    }
+
+    await Event.findByIdAndDelete(req.params.id);
+
     return res.status(204).json({ message: "Evento eliminado correctamente" });
   } catch (error) {
+    console.error("Error al eliminar evento:", error);
     res.status(500).json({ message: "Error al eliminar el evento", error });
   }
 };
