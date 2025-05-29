@@ -15,3 +15,5 @@ export const createEventSchema = z.object({
     invalid_type_error: "Fecha y hora debe ser una fecha valida",
   }),
 });
+
+//Añadir el resto para los demas metodos
