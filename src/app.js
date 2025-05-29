@@ -8,10 +8,15 @@ import eventRoutes from "./routes/events.routes.js";
 
 const app = express();
 
-app.use(cors());  //CORS para todas las rutas
+app.use(cors());  // CORS para todas las rutas
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(cookieParser());
+
+// Ruta raiz para verificar que la API funciona
+app.get("/", (req, res) => {
+  res.send("API Villas Sports funcionando");
+});
 
 app.use("/api", authRoutes);
 app.use("/api/eventos", eventRoutes);
