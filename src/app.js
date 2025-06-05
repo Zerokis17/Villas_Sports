@@ -8,7 +8,15 @@ import eventRoutes from "./routes/events.routes.js";
 
 const app = express();
 
-app.use(cors());  // CORS para todas las rutas
+// Configuración de CORS para permitir cookies entre Railway (backend) y Netlify (frontend)
+app.use(
+  cors({
+    origin: "https://villassports.netlify.app", // URL del frontend en Netlify
+    credentials: true, // Permite el uso de cookies (JWT) entre dominios
+  })
+);
+
+// Middlewares
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(cookieParser());
@@ -18,6 +26,7 @@ app.get("/", (req, res) => {
   res.send("API Villas Sports funcionando");
 });
 
+// Rutas principales
 app.use("/api", authRoutes);
 app.use("/api/eventos", eventRoutes);
 
