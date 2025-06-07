@@ -1,10 +1,25 @@
 import Event from "../models/event.model.js";
+import User from "../models/user.model.js";
 
 export const getEvents = async (req, res) => {
   try {
-    const events = await Event.find({
-      user: req.user.id,
-    }).populate("user");
+    const { tipoEvento, username } = req.query;
+
+    let query = {};
+
+    if (tipoEvento) {
+      query.tipoEvento = tipoEvento;
+    }
+
+    if (username) {
+      const user = await User.findOne({ username: username });
+      if (!user) {
+        return res.status(404).json({ message: "Usuario no encontrado" });
+      }
+      query.user = user._id;
+    }
+
+    const events = await Event.find(query).populate("user");
     res.json(events);
   } catch (error) {
     res.status(500).json({ message: "Error al buscar los eventos", error });
@@ -55,7 +70,6 @@ export const deleteEvent = async (req, res) => {
       return res.status(404).json({ message: "Evento no encontrado" });
     }
 
-    // Validar que el usuario sea el dueño del evento (si aplicas seguridad)
     if (event.user.toString() !== req.user.id) {
       return res.status(403).json({ message: "No autorizado" });
     }
@@ -75,7 +89,6 @@ export const updateEvent = async (req, res) => {
     if (!event)
       return res.status(404).json({ message: "Evento no encontrado" });
 
-    // Validación para asegurar que el evento pertenece al usuario
     if (event.user.toString() !== req.user.id) {
       return res
         .status(403)
