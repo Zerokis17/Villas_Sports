@@ -51,6 +51,7 @@ export const login = async (req, res) => {
     });
 
     res.json({
+      token, //Agregar token para frontend /login
       id: userFound._id,
       username: userFound.username,
       email: userFound.email,
@@ -65,7 +66,7 @@ export const login = async (req, res) => {
 export const logout = (req, res) => {
   res.cookie("token", "", {
     httpOnly: true,
-    secure: true,       
+    secure: true,
     sameSite: "none",
     expires: new Date(0),
   });
