@@ -12,9 +12,9 @@ import { validateSchema } from "../middlewares/validator.middleware.js";
 import { createEventSchema } from "../schemas/event.schema.js"; //falta agregar para el resto de rutas
 const router = Router();
 
-router.get("/", authRequired, getEvents);
-router.get("/:id", authRequired, getEvent);  
 router.get("/mis-eventos", authRequired, getMyEvents);
+router.get("/:id", authRequired, getEvent);  
+router.get("/", authRequired, getEvents);
 router.post("/", authRequired, validateSchema(createEventSchema), createEvent);  
 router.put("/:id", authRequired, validateSchema(createEventSchema), updateEvent);
 router.delete("/:id", authRequired, deleteEvent);
