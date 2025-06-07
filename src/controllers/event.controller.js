@@ -51,15 +51,18 @@ export const getEvent = async (req, res) => {
     if (!event)
       return res.status(404).json({ message: "Evento no encontrado" });
 
-    if (event.user._id.toString() !== req.user.id) {
-      return res
-        .status(403)
-        .json({ message: "No tienes permiso para ver este evento" });
-    }
-
     res.json(event);
   } catch (error) {
     res.status(500).json({ message: "Error al buscar el evento", error });
+  }
+};
+
+export const getMyEvents = async (req, res) => {
+  try {
+    const events = await Event.find({ user: req.user.id }).populate("user");
+    res.json(events);
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener tus eventos", error });
   }
 };
 
