@@ -8,15 +8,26 @@ export const getEvents = async (req, res) => {
     let query = {};
 
     if (tipoEvento) {
-      query.tipoEvento = tipoEvento;
+      const eventos = await Event.find({
+        tipoEvento: { $regex: tipoEvento, $options: "i" },
+      });
+      if (eventos.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "Tipo de evento no encontrado" });
+      }
+      query.tipoEvento = { $regex: tipoEvento, $options: "i" };
     }
 
     if (username) {
-      const user = await User.findOne({ username: username });
-      if (!user) {
-        return res.status(404).json({ message: "Usuario no encontrado" });
+      const users = await User.find({
+        username: { $regex: username, $options: "i" },
+      });
+      if (users.length === 0) {
+        return res.status(404).json({ message: "Usuarios no encontrados" });
       }
-      query.user = user._id;
+      const userIds = users.map((user) => user._id);
+      query.user = { $in: userIds };
     }
 
     const events = await Event.find(query).populate("user");
