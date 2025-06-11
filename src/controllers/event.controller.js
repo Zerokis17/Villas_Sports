@@ -39,13 +39,14 @@ export const getEvents = async (req, res) => {
 
 export const createEvent = async (req, res) => {
   try {
-    const { nombreEvento, tipoEvento, ubicacion, fechaHora } = req.body;
+    const { nombreEvento, tipoEvento, ubicacion, fechaHora, descripcion } = req.body;
 
     const newEvent = new Event({
       nombreEvento,
       tipoEvento,
       ubicacion,
       fechaHora,
+      descripcion,
       user: req.user.id,
     });
 

@@ -1,5 +1,3 @@
-import mongoose from "mongoose";
-
 const eventSchema = new mongoose.Schema(
   {
     nombreEvento: {
@@ -18,6 +16,10 @@ const eventSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
+    descripcion: {
+      type: String,
+      required: false,
+    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -28,5 +30,3 @@ const eventSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-
-export default mongoose.model("Event", eventSchema);
