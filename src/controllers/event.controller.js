@@ -39,13 +39,14 @@ export const getEvents = async (req, res) => {
 
 export const createEvent = async (req, res) => {
   try {
-    const { nombreEvento, tipoEvento, ubicacion, fechaHora, descripcion } = req.body;
+    const { nombreEvento, tipoEvento, ubicacion, fechaHora, descripcion } =
+      req.body;
 
     const newEvent = new Event({
       nombreEvento,
       tipoEvento,
       ubicacion,
-      fechaHora,
+      fechaHora: new Date(fechaHora),
       descripcion,
       user: req.user.id,
     });
@@ -110,9 +111,17 @@ export const updateEvent = async (req, res) => {
         .json({ message: "No tienes permiso para actualizar este evento" });
     }
 
+    const updateData = {
+      ...req.body,
+    };
+
+    if (req.body.fechaHora) {
+      updateData.fechaHora = new Date(req.body.fechaHora); // <-- CONVERSIÓN EXPLÍCITA
+    }
+
     const updatedEvent = await Event.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      updateData,
       {
         new: true,
       }
