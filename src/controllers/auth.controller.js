@@ -6,6 +6,16 @@ export const register = async (req, res) => {
   const { email, password, username } = req.body;
 
   try {
+    const emailExists = await User.findOne({ email });
+    if (emailExists)
+      return res.status(400).json({ message: "El correo ya está registrado" });
+
+    const usernameExists = await User.findOne({ username });
+    if (usernameExists)
+      return res
+        .status(400)
+        .json({ message: "El nombre de usuario ya está en uso" });
+
     const passwordHash = await bcrypt.hash(password, 10);
 
     const newUser = new User({
@@ -26,6 +36,13 @@ export const register = async (req, res) => {
       updatedAt: userSaved.updatedAt,
     });
   } catch (error) {
+    // Captura duplicados desde la base de datos
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyValue)[0];
+      return res.status(400).json({ message: `El ${field} ya está en uso` });
+    }
+
+    // Otros errores generales
     res.status(500).json({ message: error.message });
   }
 };
